@@ -1,34 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react';
 import './App.css'
 
+/*
+  React siempre está refrescando el componente, cada vez que 
+  le cambiamos el valor a todo, mi componente refreshea
+  */
 function App() {
-  const [count, setCount] = useState(0)
+const[toDo, setToDo] = useState <string>('');
+
+//let toDo: String = '';
+
+const fetchData = () => {
+  fetch('http://localhost:9090/toDoTest',
+  {method: 'GET', headers: { 
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      }
+    })
+  .then(response => response.json()
+  .then(json => setToDo((JSON.stringify(json)))))
+}
+
+
+//Agarra la data al correr app y se la asigna a ToDo
+//Si el valor de alguna de las variables dentro de los corchetes []
+// cambia, useEffect vuelve a correr 
+useEffect(() => {
+  fetchData()
+},[])
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <>To Do: {toDo}</>
   )
 }
 
