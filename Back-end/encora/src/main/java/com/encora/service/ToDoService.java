@@ -33,4 +33,8 @@ public class ToDoService {
         return optional;
     }
 
+    public List<ToDo> getToDoList(){
+        return toDoList;
+    }
+
 }
