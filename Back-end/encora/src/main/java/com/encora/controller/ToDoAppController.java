@@ -2,18 +2,16 @@ package com.encora.controller;
 
 import com.encora.model.ToDo;
 import com.encora.service.ToDoService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
-public class ToDoAppController implements ToDoApp{
+@RequestMapping("/toDo")
+public class ToDoAppController{
 
     private ToDoService toDoService;
 
@@ -22,26 +20,33 @@ public class ToDoAppController implements ToDoApp{
         this.toDoService = toDoService;
     }
 
-    @Override
-    public ResponseEntity getString() {
-        Optional<ToDo> toDo =  toDoService.getToDo(2);
-        if(toDo.isPresent()){
-            return ResponseEntity.ok(toDo.get());
+
+    @GetMapping("{id}")
+    public ResponseEntity<ToDo> getToDo(@PathVariable String id){
+
+        if(toDoService.getToDoByID(Integer.parseInt(id)) != null){
+            return ResponseEntity.ok(toDoService.getToDoByID(Integer.parseInt(id)));
         }
-        return ResponseEntity.ok().body("Hola Encorians");
+        return ResponseEntity.notFound().build();
     }
 
-    @Override
-    public ResponseEntity<String> postString() {
-        return ResponseEntity.ok().body("");
+    @PostMapping
+    public ResponseEntity<ToDo> postToDo(@RequestBody ToDo toDoAux){
+        toDoService.postToDo(toDoAux);
+        return ResponseEntity.ok(toDoAux);
     }
 
-    @GetMapping("/toDo")
-    public ToDo getToDo(@RequestParam int id){
-        Optional<ToDo> toDo =  toDoService.getToDo(id);
-        if(toDo.isPresent()){
-            return toDo.get();
+    @PutMapping("{id}")
+    public ResponseEntity<ToDo> putToDo(@RequestBody ToDo toDoAux, @PathVariable String id){
+        return ResponseEntity.ok(toDoService.putToDo(toDoAux,Integer.parseInt(id)));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ToDo> deleteToDo(@PathVariable String id){
+
+        if(toDoService.getToDoByID(Integer.parseInt(id)) != null){
+            return ResponseEntity.ok(toDoService.deleteToDoByID(Integer.parseInt(id)));
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 }

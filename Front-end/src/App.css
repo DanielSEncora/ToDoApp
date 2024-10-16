@@ -1,3 +1,11 @@
 :root{
-    padding:40px
+    margin:20px;
+    border-style: solid;
+    border-color: black;
+}
+.black-border-mp{
+    margin:10px;
+    padding: 20px;
+    border-style: solid;
+    border-color: black;
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import ToDoTable from "./components/toDoTable";
-import FilterMenu from "./components/filterMenu";
-import NewToDo from "./components/newToDo";
+import ToDoTable from "./components/ToDoTable";
+import FilterMenu from "./components/FilterMenu";
+import NewToDo from "./components/NewToDo";
 import Metrics from "./components/Metrics";
 
 /*
@@ -11,10 +11,10 @@ import Metrics from "./components/Metrics";
   */
 function App() {
   const [toDo, setToDo] = useState<string>("");
-  let id: number = 3;
+  let id: number = 7;
 
   const fetchData = (id: number) => {
-    fetch("http://localhost:9090/toDo?id=" + id, {
+    fetch("http://localhost:9090/toDo/" + id, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -33,13 +33,15 @@ function App() {
   }, []);
 
   return (
-    <div className="p-40 bg-gray-200">
+    <>
+      <div>
+        <FilterMenu />
+        <NewToDo />
+        <ToDoTable />
+        <Metrics />
+      </div>
       To Do: {toDo}
-      <FilterMenu />
-      <NewToDo />
-      <ToDoTable />
-      <Metrics />
-    </div>
+    </>
   );
 }
 
