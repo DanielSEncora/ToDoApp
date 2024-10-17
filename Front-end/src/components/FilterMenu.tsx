@@ -15,6 +15,7 @@ const filterMenu = () => {
           <div>Priority</div>
           <td>
             <select name="priority">
+              <option value="all">All</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>

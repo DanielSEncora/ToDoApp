@@ -9,17 +9,17 @@ import java.util.*;
 @Service
 public class ToDoService {
 
-    private List<ToDo> toDoList;
+    public List<ToDo> toDoList;
 
 
     public ToDoService(){
         toDoList = new ArrayList<>();
 
-        ToDo todo1 = new ToDo("Cut", ToDo.Priority.LOW);
+        ToDo todo1 = new ToDo("Cut", ToDo.Priority.LOW, "20/10/2024");
         ToDo todo2 = new ToDo("Paste", ToDo.Priority.HIGH, "20/10/2024");
-        ToDo todo3 = new ToDo("Work", ToDo.Priority.MEDIUM);
+        ToDo todo3 = new ToDo("Work", ToDo.Priority.MEDIUM, "20/10/2024");
         ToDo todo4 = new ToDo("Travel", ToDo.Priority.HIGH, "02/11/2024");
-        ToDo todo5 = new ToDo("Play music", ToDo.Priority.MEDIUM);
+        ToDo todo5 = new ToDo("Play music", ToDo.Priority.MEDIUM, "20/10/2024");
 
         toDoList.addAll(Arrays.asList(todo1,todo2,todo3,todo4,todo5));
     }
@@ -58,7 +58,7 @@ public class ToDoService {
         return null;
     }
 
-    public void printArray(ArrayList<ToDo> todos){
+    public void printList(List<ToDo> todos){
         for (ToDo todo: todos){
             System.out.println("Todo:");
             System.out.println(todo.getId());

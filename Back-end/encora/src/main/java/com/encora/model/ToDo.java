@@ -28,18 +28,28 @@ public class ToDo {
 
     public ToDo(){
         this.id = nextId++;
+        this.done = false;
+        this.creationDate = "";
+        this.doneDate = "";
     }
 
     public ToDo(String text, Priority priority) {
         this.id = nextId++;
         this.text = text;
         this.priority = priority;
+        this.done = false;
+        this.creationDate = "";
+        this.doneDate = "";
     }
 
     public ToDo(String text, Priority priority, String dueDate) {
         this.id = nextId++;
         this.text = text;
         this.priority = priority;
+        this.dueDate = dueDate;
+        this.done = false;
+        this.creationDate = "";
+        this.doneDate = "";
     }
 
     public ToDo(String text, Priority priority, String dueDate, String creationDate, String doneDate, Boolean done) {
@@ -48,6 +58,8 @@ public class ToDo {
         this.priority = priority;
         this.text = text;
         this.done = done;
+        this.creationDate = creationDate;
+        this.doneDate = doneDate;
     }
 
     public int getId() {

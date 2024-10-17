@@ -1,53 +1,92 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const toDoTable = () => {
+interface ToDo {
+  id: number;
+  text: string;
+  priority: string;
+  dueDate: string;
+}
+
+const ToDoTable: React.FC = () => {
+  const [toDos, setToDos] = useState<ToDo[]>([]);
+
+  const deleteAction = () => {
+    console.log("hi");
+    fetch("http://localhost:9090/todos/1", {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => setToDos(data))
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  const editAction = () => {};
+  const pagination = () => {};
+
+  const fetchData = () => {
+    fetch("http://localhost:9090/todos", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => setToDos(data))
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
-    <>
-      <div className="black-border-mp">
-        <table>
-          <thead>
-            <tr>
-              <th>Checkbox</th>
-              <th>Name</th>
-              <th>Priority</th>
-              <th> Due Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody className="table-group-divider">
-            <tr>
+    <div className="black-border-mp">
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" name="check" />
+            </th>
+            <th>Name</th>
+            <th>Priority</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody className="table-group-divider">
+          {toDos.map((todo) => (
+            <tr key={todo.id}>
               <td>
                 <input type="checkbox" name="check" />
               </td>
-              <td>Todo #1</td>
-              <td>High</td>
-              <td>10/11/2024</td>
-              <td>Edit/Delete</td>
-            </tr>
-            <tr>
+              <td>{todo.text}</td>
+              <td>{todo.priority}</td>
+              <td>{todo.dueDate}</td>
               <td>
-                <input type="checkbox" name="check" />
+                <button className="action-buttons" onClick={editAction}>
+                  Edit
+                </button>
+                /
+                <button className="action-buttons" onClick={deleteAction}>
+                  Delete
+                </button>
               </td>
-              <td>Todo #2</td>
-              <td>Medium</td>
-              <td>10/11/2024</td>
-              <td>Edit/Delete</td>
             </tr>
-            <tr>
-              <td>
-                <input type="checkbox" name="check" />
-              </td>
-              <td>Todo #3</td>
-              <td>Low</td>
-              <td>10/11/2024</td>
-              <td>Edit/Delete</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="">1 2 3 .. 10</div>
+          ))}
+        </tbody>
+      </table>
+      <div className="pagination black-border-mp">
+        <button className="action-buttons" onClick={pagination}>
+          1,2,3,4
+        </button>
       </div>
-    </>
+    </div>
   );
 };
 
-export default toDoTable;
+export default ToDoTable;
