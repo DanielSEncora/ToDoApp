@@ -183,7 +183,7 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index}
-            className="action-buttons"
+            className="action-buttons pagination"
             onClick={() => setCurrentPage(index + 1)}
             style={{
               fontWeight: currentPage === index + 1 ? "bold" : "normal",

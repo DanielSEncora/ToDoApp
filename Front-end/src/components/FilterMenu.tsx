@@ -55,7 +55,9 @@ const FilterMenu: React.FC<FilterProps> = ({ onFilterChange }) => {
             <option value="undone">Undone</option>
           </select>
         </td>
-        <button type="submit">Search</button>
+        <div className="search-button">
+          <button type="submit">Search</button>
+        </div>
       </div>
     </form>
   );

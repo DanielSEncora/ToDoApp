@@ -20,6 +20,17 @@
     background-color: gainsboro;
 }
 
+.search-button{
+    display: flex;
+    justify-content: flex-end;
+    
+}
+
+.pagination{
+     display: block;
+     margin: auto;
+}
+
 /* MODAL */
 
 body.active-modal {
