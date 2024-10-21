@@ -4,7 +4,11 @@ package com.encora.model;
 import jakarta.persistence.*;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 @Entity
 public class ToDo {
@@ -19,6 +23,8 @@ public class ToDo {
     private int id;
     private static int nextId = 0;
 
+    String pattern = "dd/MM/yyyy";
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     public String text;
     private Priority priority;
     private String dueDate;
@@ -29,7 +35,7 @@ public class ToDo {
     public ToDo(){
         this.id = nextId++;
         this.done = false;
-        this.creationDate = "";
+        this.creationDate = simpleDateFormat.format(new Date());
         this.doneDate = "";
     }
 
@@ -38,7 +44,20 @@ public class ToDo {
         this.text = text;
         this.priority = priority;
         this.done = false;
-        this.creationDate = "";
+        this.creationDate = simpleDateFormat.format(new Date());
+        this.doneDate = "";
+    }
+    public ToDo(String text, Priority priority, String dueDate, String done) {
+        this.id = nextId++;
+        this.text = text;
+        this.priority = priority;
+        if (done.equalsIgnoreCase("Done")) {
+            this.done = true;
+        }else{
+            this.done = false;
+        }
+        this.dueDate = dueDate;
+        this.creationDate = simpleDateFormat.format(new Date());
         this.doneDate = "";
     }
 
@@ -48,7 +67,7 @@ public class ToDo {
         this.priority = priority;
         this.dueDate = dueDate;
         this.done = false;
-        this.creationDate = "";
+        this.creationDate = simpleDateFormat.format(new Date());
         this.doneDate = "";
     }
 
