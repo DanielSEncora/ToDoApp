@@ -2,13 +2,10 @@ package com.encora.model;
 
 
 import jakarta.persistence.*;
-
-
-import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
+
 
 @Entity
 public class ToDo {
@@ -23,20 +20,28 @@ public class ToDo {
     private int id;
     private static int nextId = 0;
 
-    String pattern = "dd/MM/yyyy";
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     public String text;
     private Priority priority;
-    private String dueDate;
-    private String creationDate;
+    private Date dueDate;
+    private Date creationDate;
     private String doneDate;
     private boolean done;
+
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     public ToDo(){
         this.id = nextId++;
         this.done = false;
-        this.creationDate = simpleDateFormat.format(new Date());
+        this.creationDate = new Date();
         this.doneDate = "";
+    }
+    private Date parseDate(String dateString) {
+        try {
+            return simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // Handle parsing error
+        }
     }
 
     public ToDo(String text, Priority priority) {
@@ -44,7 +49,7 @@ public class ToDo {
         this.text = text;
         this.priority = priority;
         this.done = false;
-        this.creationDate = simpleDateFormat.format(new Date());
+        this.creationDate = new Date();
         this.doneDate = "";
     }
     public ToDo(String text, Priority priority, String dueDate, String done) {
@@ -56,8 +61,8 @@ public class ToDo {
         }else{
             this.done = false;
         }
-        this.dueDate = dueDate;
-        this.creationDate = simpleDateFormat.format(new Date());
+        this.dueDate = parseDate(dueDate);
+        this.creationDate = new Date();
         this.doneDate = "";
     }
 
@@ -65,19 +70,19 @@ public class ToDo {
         this.id = nextId++;
         this.text = text;
         this.priority = priority;
-        this.dueDate = dueDate;
+        this.dueDate = parseDate(dueDate);
         this.done = false;
-        this.creationDate = simpleDateFormat.format(new Date());
+        this.creationDate = new Date();
         this.doneDate = "";
     }
 
     public ToDo(String text, Priority priority, String dueDate, String creationDate, String doneDate, Boolean done) {
         this.id = nextId++;
-        this.dueDate = dueDate;
+        this.dueDate = parseDate(dueDate);
         this.priority = priority;
         this.text = text;
         this.done = done;
-        this.creationDate = creationDate;
+        this.creationDate = parseDate(creationDate);
         this.doneDate = doneDate;
     }
 
@@ -105,19 +110,19 @@ public class ToDo {
         this.priority = priority;
     }
 
-    public String getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
+    public void setDueDate(String dueDateString) {
+        this.dueDate = parseDate(dueDateString);
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 

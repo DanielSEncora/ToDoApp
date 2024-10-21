@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import "../App.css";
 
@@ -10,7 +12,7 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
   const [modal, setModal] = useState<boolean>(false);
   const [newToDoText, setNewToDoText] = useState<string>("");
   const [priority, setPriority] = useState<string>("HIGH");
-  const [dueDate, setDueDate] = useState<string>("");
+  const [dueDate, setDueDate] = useState<Date | null>(null);
 
   const toggleModal = () => {
     setModal((prev) => !prev);
@@ -22,25 +24,25 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
     document.body.classList.remove("active-modal");
   }
 
-  const parseDate = (dateString: string): string => {
-    const [year, month, day] = dateString.split("-").map(Number);
-    // Create a new Date object
-    const date = new Date(year, month - 1, day);
+  const formatDate = (date: Date): string => {
+    const pad = (num: number) => String(num).padStart(2, "0");
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1); // Months are zero-indexed
+    const year = date.getFullYear();
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
 
-    // Format the date as dd/MM/yyyy
-    const formattedDate = `${String(date.getDate()).padStart(2, "0")}/${String(
-      date.getMonth() + 1
-    ).padStart(2, "0")}/${date.getFullYear()}`;
-
-    return formattedDate;
+    // Adjust format based on your backend requirements
+    return `${day}/${month}/${year} ${hours}:${minutes}:00`;
   };
 
   const addToDo = () => {
     const newToDo = {
       text: newToDoText,
       priority: priority,
-      dueDate: dueDate,
+      dueDate: dueDate ? formatDate(dueDate) : null,
     };
+    console.log(newToDo);
     fetch("http://localhost:9090/todos", {
       method: "POST",
       headers: {
@@ -84,10 +86,13 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
               <option value="LOW">Low</option>
             </select>
             <div>Due Date:</div>
-            <input
-              type="date"
-              name="dueDate"
-              onChange={(e) => setDueDate(String(parseDate(e.target.value)))}
+            <DatePicker
+              selected={dueDate}
+              onChange={(date) => setDueDate(date)} // Set selected date
+              showTimeSelect
+              dateFormat="Pp" // Custom format for date and time
+              timeFormat="HH:mm:ss"
+              timeIntervals={1} // Show every minute
             />
             <button className="close-modal" onClick={toggleModal}>
               X

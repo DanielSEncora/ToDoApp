@@ -25,6 +25,36 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
     setSortedToDos(toDos);
   }, [toDos, refreshData]);
 
+  const updateDoneTrue = (id: number) => {
+    fetch(`http://localhost:9090/todos/${id}/done`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to mark todo as done");
+        refreshData(); // Refresh data after deletion
+      })
+      .catch((error) => console.error("Error marking todo as done:", error));
+  };
+
+  const updateDoneFalse = (id: number) => {
+    fetch(`http://localhost:9090/todos/${id}/undone`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to mark todo as undone");
+        refreshData(); // Refresh data after marking as undone
+      })
+      .catch((error) => console.error("Error marking todo as undone:", error));
+  };
+
   const deleteAction = (id: number) => {
     fetch(`http://localhost:9090/todos/${id}`, {
       method: "DELETE",
@@ -40,11 +70,15 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
       .catch((error) => console.error("Error deleting todo:", error));
   };
 
-  const parseDate = (dateString: string): Date => {
-    console.log("before: " + dateString);
-    const [year, month, day] = dateString.split("/").map(Number);
-    console.log("after: " + new Date(year, month, -1, day));
-    return new Date(year, month - 1, day);
+  const parseDate = (dateString: string): string => {
+    // Parse the date string into a Date object
+    const date: Date = new Date(dateString);
+
+    // Format the date to yyyy/MM/dd
+    const year: number = date.getFullYear();
+    const month: string = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
+    const day: string = String(date.getDate()).padStart(2, "0"); // Add leading zero if needed
+    return `${year}/${month}/${day}`;
   };
 
   const handleSort = (column: keyof ToDo) => {
@@ -55,11 +89,8 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
 
     const sortedToDos = [...toDos].sort((a, b) => {
       if (column === "dueDate") {
-        // Parse dates directly in the sorting logic
-
-        const dateA = parseDate(a[column]); // Assuming a[column] is in 'yyyy-MM-dd' format
-        const dateB = parseDate(b[column]);
-
+        const dateA = new Date(a[column]); // Parse directly as Date
+        const dateB = new Date(b[column]);
         return direction === "asc"
           ? dateA.getTime() - dateB.getTime()
           : dateB.getTime() - dateA.getTime();
@@ -76,12 +107,16 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
           : priorityOrder[b[column]] - priorityOrder[a[column]];
       }
 
-      if (a[column] < b[column]) return direction === "asc" ? -1 : 1;
-      if (a[column] > b[column]) return direction === "asc" ? 1 : -1;
-      return 0;
+      return a[column] < b[column]
+        ? direction === "asc"
+          ? -1
+          : 1
+        : direction === "asc"
+        ? 1
+        : -1;
     });
 
-    setSortedToDos(sortedToDos); // Update the sorted state
+    setSortedToDos(sortedToDos);
   };
 
   const totalPages = Math.ceil(sortedToDos.length / itemsPerPage);
@@ -113,14 +148,21 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
                   <input
                     type="checkbox"
                     name="check"
-                    defaultChecked={todo.done}
+                    checked={todo.done} // Use checked instead of defaultChecked
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        updateDoneTrue(todo.id);
+                      } else {
+                        updateDoneFalse(todo.id);
+                      }
+                    }}
                   />
                 </td>
                 <td>{todo.text}</td>
                 <td>{todo.priority}</td>
-                <td>{todo.dueDate}</td>
+                <td>{parseDate(todo.dueDate)}</td>
                 <td>
-                  <EditModal todoId={todo.id} />/
+                  <EditModal todoId={todo.id} onEdit={refreshData} />/
                   <button
                     className="action-buttons"
                     onClick={() => deleteAction(todo.id)}

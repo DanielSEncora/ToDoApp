@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import Search from "./Search";
 import "../App.css";
-
-interface ToDo {
-  id: number;
-  text: string;
-  priority: string;
-  dueDate: string;
-  done: boolean;
-}
 
 type FilterProps = {
   onFilterChange: (text: string, priority: string, done: string) => void;

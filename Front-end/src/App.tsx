@@ -50,7 +50,7 @@ function App() {
       <FilterMenu onFilterChange={fetchFilteredData} />
       <Modal onAdd={fetchData} />
       <ToDoTable toDos={toDo} refreshData={fetchData} />
-      <Metrics />
+      <Metrics toDos={toDo} />
     </>
   );
 }
