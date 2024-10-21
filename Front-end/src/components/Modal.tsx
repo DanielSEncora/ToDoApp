@@ -74,6 +74,7 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
             <input
               type="text"
               name="text"
+              maxLength={120}
               onChange={(e) => setNewToDoText(e.target.value)}
             />
             <div>Priority:</div>

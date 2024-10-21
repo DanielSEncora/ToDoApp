@@ -107,6 +107,7 @@ const EditModal: React.FC<{ todoId: number; onEdit: () => void }> = ({
             <input
               type="text"
               name="text"
+              maxLength={120}
               defaultValue={toDo?.text}
               onChange={(e) =>
                 setToDo((prev) =>

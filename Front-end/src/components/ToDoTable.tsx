@@ -19,7 +19,7 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
   const [sortColumn, setSortColumn] = useState<keyof ToDo | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 6; // Number of items per page
+  const itemsPerPage = 10; // Number of items per page
 
   useEffect(() => {
     setSortedToDos(toDos);
