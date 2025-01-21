@@ -1,13 +1,9 @@
 package com.encora.model;
 
-
-import jakarta.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-@Entity
 public class ToDo {
     public enum Priority {
         LOW,
@@ -15,12 +11,10 @@ public class ToDo {
         HIGH
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private static int nextId = 0;
 
-    public String text;
+    private String text;
     private Priority priority;
     private Date dueDate;
     private Date creationDate;
@@ -29,12 +23,13 @@ public class ToDo {
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-    public ToDo(){
+    public ToDo() {
         this.id = nextId++;
         this.done = false;
         this.creationDate = new Date();
         this.doneDate = "";
     }
+
     private Date parseDate(String dateString) {
         try {
             return simpleDateFormat.parse(dateString);
@@ -45,39 +40,32 @@ public class ToDo {
     }
 
     public ToDo(String text, Priority priority) {
-        this.id = nextId++;
+        this();
         this.text = text;
         this.priority = priority;
-        this.done = false;
-        this.creationDate = new Date();
-        this.doneDate = "";
     }
+
     public ToDo(String text, Priority priority, String dueDate, String done) {
-        this.id = nextId++;
+        this();
         this.text = text;
         this.priority = priority;
         if (done.equalsIgnoreCase("Done")) {
             this.done = true;
-        }else{
+        } else {
             this.done = false;
         }
         this.dueDate = parseDate(dueDate);
-        this.creationDate = new Date();
-        this.doneDate = "";
     }
 
     public ToDo(String text, Priority priority, String dueDate) {
-        this.id = nextId++;
+        this();
         this.text = text;
         this.priority = priority;
         this.dueDate = parseDate(dueDate);
-        this.done = false;
-        this.creationDate = new Date();
-        this.doneDate = "";
     }
 
     public ToDo(String text, Priority priority, String dueDate, String creationDate, String doneDate, Boolean done) {
-        this.id = nextId++;
+        this();
         this.dueDate = parseDate(dueDate);
         this.priority = priority;
         this.text = text;

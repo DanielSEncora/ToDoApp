@@ -20,7 +20,8 @@ public class ToDoService {
         // Initialize with some sample todos
         ToDo todo1 = new ToDo("CutLowUndone", ToDo.Priority.LOW, "21/10/2024 13:40:20", "Undone");
         ToDo todo2 = new ToDo("CutHighUndone", ToDo.Priority.HIGH, "20/10/2024 15:50:25", "Undone");
-        // Add more sample todos as needed
+
+
         toDoList.addAll(Arrays.asList(todo1, todo2));
     }
 
