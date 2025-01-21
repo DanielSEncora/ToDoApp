@@ -29,7 +29,6 @@ public class ToDoService {
 
     public ToDoService(){
         toDoList = new ArrayList<>();
-/*
         ToDo todo1 = new ToDo("CutLowUndone", ToDo.Priority.LOW,"21/10/2024 13:40:20","Undone");
         ToDo todo2 = new ToDo("CutHighDone", ToDo.Priority.HIGH, "20/10/2024 15:50:25", "done");
         ToDo todo3 = new ToDo("CutMediumUndone", ToDo.Priority.MEDIUM, "22/10/2024 20:20:35","undone");
@@ -40,8 +39,30 @@ public class ToDoService {
         ToDo todo30 = new ToDo("PasteMediumUndone", ToDo.Priority.MEDIUM, "22/10/2024 08:40:20","undone");
         ToDo todo40 = new ToDo("PasteLowDone", ToDo.Priority.LOW, "02/11/2024 08:45:03", "Done");
         ToDo todo50 = new ToDo("PasteHighUndone", ToDo.Priority.HIGH, "24/10/2024 09:00:01", "undone");
+        ToDo todo6 = new ToDo("Fix bug", ToDo.Priority.LOW, "25/10/2024 10:20:30", "undone");
+        ToDo todo7 = new ToDo("Write documentation", ToDo.Priority.HIGH, "26/10/2024 12:15:45", "done");
+        ToDo todo8 = new ToDo("Deploy feature", ToDo.Priority.MEDIUM, "27/10/2024 14:00:00", "undone");
+        ToDo todo9 = new ToDo("Run tests", ToDo.Priority.LOW, "28/10/2024 16:25:10", "done");
+        ToDo todo11 = new ToDo("Review code", ToDo.Priority.HIGH, "29/10/2024 18:10:20", "undone");
+        ToDo todo12 = new ToDo("Refactor code", ToDo.Priority.LOW, "30/10/2024 08:30:55", "undone");
+        ToDo todo13 = new ToDo("Plan sprint", ToDo.Priority.MEDIUM, "31/10/2024 09:45:15", "done");
+        ToDo todo14 = new ToDo("Sync repository", ToDo.Priority.HIGH, "01/11/2024 11:10:40", "undone");
+        ToDo todo15 = new ToDo("Update dependencies", ToDo.Priority.LOW, "02/11/2024 13:50:25", "done");
+        ToDo todo16 = new ToDo("Write unit tests", ToDo.Priority.MEDIUM, "03/11/2024 15:15:30", "undone");
+        ToDo todo17 = new ToDo("Create backup", ToDo.Priority.HIGH, "04/11/2024 17:20:50", "done");
+        ToDo todo18 = new ToDo("Optimize query", ToDo.Priority.LOW, "05/11/2024 19:40:10", "undone");
+        ToDo todo19 = new ToDo("Design mockups", ToDo.Priority.MEDIUM, "06/11/2024 21:10:00", "done");
+        ToDo todo21 = new ToDo("Conduct meeting", ToDo.Priority.HIGH, "07/11/2024 07:50:45", "undone");
+        ToDo todo22 = new ToDo("Setup server", ToDo.Priority.LOW, "08/11/2024 09:30:20", "done");
+        ToDo todo23 = new ToDo("Analyze logs", ToDo.Priority.MEDIUM, "09/11/2024 10:15:35", "undone");
+        ToDo todo24 = new ToDo("Monitor performance", ToDo.Priority.HIGH, "10/11/2024 12:05:15", "done");
+        ToDo todo25 = new ToDo("Draft proposal", ToDo.Priority.LOW, "11/11/2024 13:45:50", "undone");
+        ToDo todo26 = new ToDo("Update README", ToDo.Priority.MEDIUM, "12/11/2024 15:30:00", "done");
+        ToDo todo27 = new ToDo("Schedule review", ToDo.Priority.HIGH, "13/11/2024 16:50:25", "undone");
 
-        toDoList.addAll(Arrays.asList(todo1,todo2,todo3,todo4,todo5,todo10,todo20,todo30,todo50,todo40));*/
+        toDoList.addAll(Arrays.asList(todo6, todo7, todo8, todo9, todo11, todo12, todo13, todo14, todo15, todo16,
+                todo17, todo18, todo19, todo21, todo22, todo23, todo24, todo25, todo26, todo27,todo1,todo2,todo3,todo4,todo5,todo10,todo20,todo30,todo50,todo40));
+
     }
 
     public ToDo getToDoByID(int id){

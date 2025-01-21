@@ -2,23 +2,21 @@ package com.encora.controller;
 
 import com.encora.model.ToDo;
 import com.encora.service.ToDoService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8080")
 @RequestMapping("/todos")
-public class ToDoAppController{
+public class ToDoController {
 
     private final ToDoService toDoService;
 
     @Autowired
-    public ToDoAppController(ToDoService toDoService){
+    public ToDoController(ToDoService toDoService){
         this.toDoService = toDoService;
     }
 
