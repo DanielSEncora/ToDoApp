@@ -16,56 +16,60 @@ public class ToDoController {
     private final ToDoService toDoService;
 
     @Autowired
-    public ToDoController(ToDoService toDoService){
+    public ToDoController(ToDoService toDoService) {
         this.toDoService = toDoService;
     }
 
-
-    @GetMapping()
-    public ResponseEntity<List<ToDo>> getAllToDos(){
-            return ResponseEntity.ok(toDoService.toDoList);
+    @GetMapping
+    public ResponseEntity<List<ToDo>> getAllToDos() {
+        List<ToDo> toDoList = toDoService.getAllToDos();
+        return ResponseEntity.ok(toDoList);
     }
-    @GetMapping("{id}")
-    public ResponseEntity<ToDo> getToDo(@PathVariable String id){
 
-        if(toDoService.getToDoByID(Integer.parseInt(id)) != null){
-            return ResponseEntity.ok(toDoService.getToDoByID(Integer.parseInt(id)));
+    @GetMapping("/{id}")
+    public ResponseEntity<ToDo> getToDo(@PathVariable int id) {
+        ToDo toDo = toDoService.getToDoByID(id);
+        if (toDo != null) {
+            return ResponseEntity.ok(toDo);
         }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/filter/{text}-{priority}-{state}")
-    public List<ToDo> filterToDos(@PathVariable String text,@PathVariable String priority, @PathVariable String state ) {
-        List<ToDo> allToDos = toDoService.toDoList; // Fetch all todos
-        return toDoService.filter(allToDos, text,priority,state); // Use your existing filter method
+    public ResponseEntity<List<ToDo>> filterToDos(@PathVariable String text, @PathVariable String priority, @PathVariable String state) {
+        List<ToDo> filteredToDos = toDoService.filterToDos(text, priority, state);
+        return ResponseEntity.ok(filteredToDos);
     }
 
     @PostMapping
-    public ResponseEntity<ToDo> postToDo(@RequestBody ToDo toDoAux){
-        toDoService.postToDo(toDoAux);
-        return ResponseEntity.ok(toDoAux);
+    public ResponseEntity<ToDo> createToDo(@RequestBody ToDo toDo) {
+        ToDo createdToDo = toDoService.createToDo(toDo);
+        return ResponseEntity.ok(createdToDo);
     }
 
-    @PostMapping("{id}/done")
-    public ResponseEntity<ToDo> postToDo(@PathVariable String id){
-        return ResponseEntity.ok(toDoService.postToDo(Integer.parseInt(id)));
+    @PostMapping("/{id}/done")
+    public ResponseEntity<ToDo> markToDoAsDone(@PathVariable int id) {
+        ToDo updatedToDo = toDoService.markToDoAsDone(id);
+        return ResponseEntity.ok(updatedToDo);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<ToDo> putToDo(@RequestBody ToDo toDoAux, @PathVariable String id){
-        return ResponseEntity.ok(toDoService.putToDo(toDoAux,Integer.parseInt(id)));
+    @PutMapping("/{id}")
+    public ResponseEntity<ToDo> updateToDo(@RequestBody ToDo toDo, @PathVariable int id) {
+        ToDo updatedToDo = toDoService.updateToDo(id, toDo);
+        return ResponseEntity.ok(updatedToDo);
     }
 
-    @PutMapping("{id}/undone")
-    public ResponseEntity<ToDo> putToDo(@PathVariable String id){
-        return ResponseEntity.ok(toDoService.putToDo(Integer.parseInt(id)));
+    @PutMapping("/{id}/undone")
+    public ResponseEntity<ToDo> markToDoAsUndone(@PathVariable int id) {
+        ToDo updatedToDo = toDoService.markToDoAsUndone(id);
+        return ResponseEntity.ok(updatedToDo);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<ToDo> deleteToDo(@PathVariable String id){
-
-        if(toDoService.getToDoByID(Integer.parseInt(id)) != null){
-            return ResponseEntity.ok(toDoService.deleteToDoByID(Integer.parseInt(id)));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteToDo(@PathVariable int id) {
+        boolean isDeleted = toDoService.deleteToDoByID(id);
+        if (isDeleted) {
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
     }
