@@ -38,13 +38,10 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public ToDo getToDoByID(int id) {
-        for (ToDo toDo : toDoList) {
-            if (id == toDo.getId()) {
-                return toDo;
-            }
-        }
-        return null;
+    public Optional<ToDo> getToDoByID(int id) {
+        return toDoList.stream()
+                .filter(toDo -> toDo.getId() == id)
+                .findFirst();
     }
 
     @Override
@@ -54,20 +51,18 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public ToDo markToDoAsDone(int id) {
-        for (ToDo toDo : toDoList) {
-            if (id == toDo.getId()) {
-                toDo.setDoneDate(OffsetDateTime.now().format(DONE_DATE_FORMAT));
-                toDo.setDone(true);
-                return toDo;
-            }
-        }
-        return null;
+    public Optional<ToDo> markToDoAsDone(int id) {
+        Optional<ToDo> toDoOptional = getToDoByID(id);
+        toDoOptional.ifPresent(toDo -> {
+            toDo.setDoneDate(OffsetDateTime.now().format(DONE_DATE_FORMAT));
+            toDo.setDone(true);
+        });
+        return toDoOptional;
     }
 
     @Override
     public ToDo updateToDo(int id, ToDo toDo) {
-        ToDo existingToDo = getToDoByID(id);
+        ToDo existingToDo = getToDoByID(id).orElse(null);
 
         if (existingToDo != null) {
             toDo.setId(id);
@@ -80,25 +75,20 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public ToDo markToDoAsUndone(int id) {
-        for (ToDo toDo : toDoList) {
-            if (id == toDo.getId()) {
-                toDo.setDone(false);
-                toDo.setDoneDate("");
-                return toDo;
-            }
-        }
-        return null;
+    public Optional<ToDo> markToDoAsUndone(int id) {
+        Optional<ToDo> toDoOptional = getToDoByID(id);
+        toDoOptional.ifPresent(toDo -> {
+            toDo.setDone(false);
+            toDo.setDoneDate("");
+        });
+        return toDoOptional;
     }
 
     @Override
     public boolean deleteToDoByID(int id) {
-        ToDo toDo = getToDoByID(id);
-        if (toDo != null) {
-            toDoList.remove(toDo);
-            return true;
-        }
-        return false;
+        Optional<ToDo> toDoOptional = getToDoByID(id);
+        toDoOptional.ifPresent(toDoList::remove);
+        return toDoOptional.isPresent();
     }
 
     @Override

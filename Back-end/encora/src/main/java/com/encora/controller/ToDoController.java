@@ -1,5 +1,7 @@
 package com.encora.controller;
 
+import com.encora.exception.InvalidInputException;
+import com.encora.exception.ResourceNotFoundException;
 import com.encora.model.ToDo;
 import com.encora.service.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,9 @@ public class ToDoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ToDo> getToDo(@PathVariable int id) {
-        ToDo toDo = toDoService.getToDoByID(id);
-        if (toDo != null) {
-            return ResponseEntity.ok(toDo);
-        }
-        return ResponseEntity.notFound().build();
+        ToDo toDo = toDoService.getToDoByID(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ToDo not found with id " + id));
+        return ResponseEntity.ok(toDo);
     }
 
     @GetMapping("/filter/{text}-{priority}-{state}")
@@ -43,34 +43,41 @@ public class ToDoController {
 
     @PostMapping
     public ResponseEntity<ToDo> createToDo(@RequestBody ToDo toDo) {
+        if (toDo.getText() == null || toDo.getText().isEmpty()) {
+            throw new InvalidInputException("Text is required");
+        }
         ToDo createdToDo = toDoService.createToDo(toDo);
-        return ResponseEntity.ok(createdToDo);
+        return ResponseEntity.status(201).body(createdToDo);
     }
 
     @PostMapping("/{id}/done")
     public ResponseEntity<ToDo> markToDoAsDone(@PathVariable int id) {
-        ToDo updatedToDo = toDoService.markToDoAsDone(id);
+        ToDo updatedToDo = toDoService.markToDoAsDone(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ToDo not found with id " + id));
         return ResponseEntity.ok(updatedToDo);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ToDo> updateToDo(@RequestBody ToDo toDo, @PathVariable int id) {
-        ToDo updatedToDo = toDoService.updateToDo(id, toDo);
+        if (toDo.getText() == null || toDo.getText().isEmpty()) {
+            throw new InvalidInputException("Text is required");
+        }
+        ToDo updatedToDo = toDoService.updateToDo(id, toDo)
+                .orElseThrow(() -> new ResourceNotFoundException("ToDo not found with id " + id));
         return ResponseEntity.ok(updatedToDo);
     }
 
     @PutMapping("/{id}/undone")
     public ResponseEntity<ToDo> markToDoAsUndone(@PathVariable int id) {
-        ToDo updatedToDo = toDoService.markToDoAsUndone(id);
+        ToDo updatedToDo = toDoService.markToDoAsUndone(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ToDo not found with id " + id));
         return ResponseEntity.ok(updatedToDo);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteToDo(@PathVariable int id) {
-        boolean isDeleted = toDoService.deleteToDoByID(id);
-        if (isDeleted) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        toDoService.deleteToDoByID(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ToDo not found with id " + id));
+        return ResponseEntity.noContent().build();
     }
 }
