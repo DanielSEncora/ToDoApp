@@ -1,5 +1,7 @@
 package com.encora.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,12 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     // Handle ResourceNotFoundException
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        logger.error("ResourceNotFoundException: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
@@ -27,6 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Handle InvalidInputException
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity<ErrorResponse> handleInvalidInputException(InvalidInputException ex, WebRequest request) {
+        logger.error("InvalidInputException: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -34,6 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Handle DuplicateResourceException
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResourceException(DuplicateResourceException ex, WebRequest request) {
+        logger.error("DuplicateResourceException: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
@@ -52,12 +59,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         });
 
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), "Validation failed", errors.toString());
+        logger.error("Validation Exception: {}", errors.toString(), ex);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     // Handle global exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
+        logger.error("Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
