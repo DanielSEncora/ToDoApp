@@ -16,6 +16,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * The ToDoControllerTest class provides unit tests for the ToDoController class.
+ * It verifies the functionality of creating, retrieving, updating, deleting,
+ * and marking ToDo items as done or undone through the controller.
+ */
 class ToDoControllerTest {
 
     @Mock
@@ -24,11 +29,19 @@ class ToDoControllerTest {
     @InjectMocks
     private ToDoController toDoController;
 
+    /**
+     * Sets up the mocks and initializes the ToDoController instance before each test.
+     * This method is executed before each test case to ensure a fresh state.
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the retrieval of all ToDo items through the controller.
+     * Verifies that the response status is 200 OK and the list contains the expected number of items.
+     */
     @Test
     void testGetAllToDos() {
         List<ToDo> toDoList = Arrays.asList(new ToDo(), new ToDo());
@@ -39,6 +52,10 @@ class ToDoControllerTest {
         assertEquals(2, response.getBody().size());
     }
 
+    /**
+     * Tests the retrieval of a ToDo item by its ID through the controller.
+     * Verifies that the response status is 200 OK and the ToDo item has the expected ID.
+     */
     @Test
     void testGetToDo() {
         ToDo toDo = new ToDo();
@@ -50,6 +67,10 @@ class ToDoControllerTest {
         assertEquals(1, response.getBody().getId());
     }
 
+    /**
+     * Tests the creation of a new ToDo item through the controller.
+     * Verifies that the response status is 201 Created and the ToDo item has the expected text.
+     */
     @Test
     void testCreateToDo() {
         ToDo toDo = new ToDo("Test", ToDo.Priority.MEDIUM, "22/01/2025 17:37:33", "Undone");
@@ -60,6 +81,10 @@ class ToDoControllerTest {
         assertEquals("Test", response.getBody().getText());
     }
 
+    /**
+     * Tests marking a ToDo item as done through the controller.
+     * Verifies that the response status is 200 OK and the ToDo item is marked as done.
+     */
     @Test
     void testMarkToDoAsDone() {
         ToDo toDo = new ToDo();
@@ -72,6 +97,10 @@ class ToDoControllerTest {
         assertTrue(response.getBody().isDone());
     }
 
+    /**
+     * Tests the update of an existing ToDo item through the controller.
+     * Verifies that the response status is 200 OK and the ToDo item has the expected updated text.
+     */
     @Test
     void testUpdateToDo() {
         ToDo toDo = new ToDo();
@@ -85,6 +114,10 @@ class ToDoControllerTest {
         assertEquals("Updated", response.getBody().getText());
     }
 
+    /**
+     * Tests marking a ToDo item as undone through the controller.
+     * Verifies that the response status is 200 OK and the ToDo item is marked as undone.
+     */
     @Test
     void testMarkToDoAsUndone() {
         ToDo toDo = new ToDo();
@@ -97,6 +130,10 @@ class ToDoControllerTest {
         assertFalse(response.getBody().isDone());
     }
 
+    /**
+     * Tests the deletion of a ToDo item by its ID through the controller.
+     * Verifies that the response status is 204 No Content.
+     */
     @Test
     void testDeleteToDo() {
         ToDo toDo = new ToDo();
