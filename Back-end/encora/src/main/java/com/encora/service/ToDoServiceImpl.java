@@ -93,10 +93,13 @@ public class ToDoServiceImpl implements ToDoService {
     public Optional<ToDo> updateToDo(int id, ToDo toDo) {
         Optional<ToDo> existingToDo = getToDoByID(id);
         existingToDo.ifPresent(existing -> {
-            toDo.setId(id);
-            toDo.setCreationDate(existing.getCreationDate());
-            toDoList.remove(existing);
-            toDoList.add(toDo);
+            existing.setText(toDo.getText());
+            existing.setPriority(toDo.getPriority());
+            // Format the due date to the expected format
+            String formattedDueDate = simpleDateFormat.format(toDo.getDueDate());
+            existing.setDueDate(formattedDueDate);
+            existing.setDone(toDo.isDone());
+            existing.setDoneDate(toDo.getDoneDate());
         });
         return existingToDo;
     }
@@ -126,7 +129,10 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     public Optional<ToDo> deleteToDoByID(int id) {
         Optional<ToDo> toDoOptional = getToDoByID(id);
-        toDoOptional.ifPresent(toDoList::remove);
+        toDoOptional.ifPresent(toDo -> {
+            toDoList.remove(toDo);
+            System.out.println("Deleted ToDo with ID: " + id);
+        });
         return toDoOptional;
     }
 

@@ -23,6 +23,7 @@ public class ToDo {
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
+    // Default constructor
     public ToDo() {
         this.id = nextId++;
         this.done = false;
@@ -30,6 +31,7 @@ public class ToDo {
         this.doneDate = "";
     }
 
+    // Helper method to parse date
     private Date parseDate(String dateString) {
         try {
             return simpleDateFormat.parse(dateString);
@@ -39,24 +41,23 @@ public class ToDo {
         }
     }
 
+    // Constructor with text and priority
     public ToDo(String text, Priority priority) {
         this();
         this.text = text;
         this.priority = priority;
     }
 
+    // Constructor with text, priority, due date, and done status
     public ToDo(String text, Priority priority, String dueDate, String done) {
         this();
         this.text = text;
         this.priority = priority;
-        if (done.equalsIgnoreCase("Done")) {
-            this.done = true;
-        } else {
-            this.done = false;
-        }
+        this.done = "Done".equalsIgnoreCase(done);
         this.dueDate = parseDate(dueDate);
     }
 
+    // Constructor with text, priority, and due date
     public ToDo(String text, Priority priority, String dueDate) {
         this();
         this.text = text;
@@ -64,14 +65,15 @@ public class ToDo {
         this.dueDate = parseDate(dueDate);
     }
 
+    // Full constructor
     public ToDo(String text, Priority priority, String dueDate, String creationDate, String doneDate, Boolean done) {
         this();
-        this.dueDate = parseDate(dueDate);
-        this.priority = priority;
         this.text = text;
-        this.done = done;
+        this.priority = priority;
+        this.dueDate = parseDate(dueDate);
         this.creationDate = parseDate(creationDate);
         this.doneDate = doneDate;
+        this.done = done;
     }
 
     public int getId() {
