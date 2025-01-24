@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ToDo } from '../types';
 
 const useToDo = () => {
@@ -36,6 +36,33 @@ const useToDo = () => {
       setLoading(false);
     }
   };
+
+  const fetchToDo = useCallback(async (id: number): Promise<ToDo> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`http://localhost:9090/todos/${id}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch to-do');
+      }
+      return await response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      throw error; // Rethrow the error so that the caller can handle it
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const fetchFilteredData = async (text: string, priority: string, done: string) => {
     setLoading(true);
@@ -143,6 +170,7 @@ const useToDo = () => {
     loading,
     error,
     fetchToDos,
+    fetchToDo,
     fetchFilteredData,
     addToDo,
     updateToDo,
