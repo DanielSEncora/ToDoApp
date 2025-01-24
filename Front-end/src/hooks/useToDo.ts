@@ -64,35 +64,25 @@ const useToDo = () => {
     }
   };
 
-  const addToDo = async (newToDo: ToDo) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('http://localhost:9090/todos', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newToDo),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to add to-do');
-      }
-      const data = await response.json();
-      setToDos((prevToDos) => [...prevToDos, data]);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unknown error occurred');
-      }
-    } finally {
-      setLoading(false);
+  const addToDo = async (newToDo: Omit<ToDo, 'id'>) => {
+    const response = await fetch('http://localhost:9090/todos', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newToDo),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add to-do');
     }
+
+    const data: ToDo = await response.json();
+    setToDos((prevToDos) => [...prevToDos, data]);
   };
 
-  const updateToDo = async (id: number, updatedToDo: ToDo) => {
+  const updateToDo = async (id: number, updatedToDo: Partial<ToDo>) => {
     setLoading(true);
     setError(null);
     try {

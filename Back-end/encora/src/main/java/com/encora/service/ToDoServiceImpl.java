@@ -111,16 +111,43 @@ public class ToDoServiceImpl implements ToDoService {
      */
     @Override
     public Optional<ToDo> updateToDo(int id, ToDo toDo) {
+        // Log incoming request
+        System.out.println("Received update request for ToDo with ID: " + id);
+        System.out.println("Incoming ToDo data: " + toDo);
+
         Optional<ToDo> existingToDo = getToDoByID(id);
         existingToDo.ifPresent(existing -> {
+            System.out.println("Existing ToDo before update: " + existing);
+
             existing.setText(toDo.getText());
             existing.setPriority(toDo.getPriority());
-            // Format the due date to the expected format
-            String formattedDueDate = simpleDateFormat.format(toDo.getDueDate());
-            existing.setDueDate(formattedDueDate);
+
+            // Ensure dueDate is not null and format it
+            if (toDo.getDueDate() != null) {
+                String formattedDueDate = simpleDateFormat.format(toDo.getDueDate());
+                existing.setDueDate(formattedDueDate);
+            } else {
+                existing.setDueDate(simpleDateFormat.format(new Date())); // Set to current date if null
+            }
+
+            // Ensure creationDate is not null and set it
+            if (toDo.getCreationDate() != null) {
+                existing.setCreationDate(toDo.getCreationDate());
+            } else {
+                existing.setCreationDate(new Date()); // Set to current date if null
+            }
+
             existing.setDone(toDo.isDone());
             existing.setDoneDate(toDo.getDoneDate());
+
+            // Log updated ToDo state
+            System.out.println("Updated ToDo: " + existing);
         });
+
+        if (!existingToDo.isPresent()) {
+            System.out.println("No ToDo found with ID: " + id);
+        }
+
         return existingToDo;
     }
 

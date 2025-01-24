@@ -23,7 +23,11 @@ const calculateAverageTime = (toDos: ToDo[]) => {
 
 const calculateAverageTimeByPriority = (toDos: ToDo[], priority: string) => {
   const finishedTasks = toDos.filter(
-    (todo) => todo.done && todo.priority === priority && todo.doneDate,
+    (todo) =>
+      todo.done &&
+      todo.priority === priority &&
+      todo.doneDate &&
+      todo.creationDate,
   )
   const totalTimeInMillis = finishedTasks.reduce((total, todo) => {
     const creationDate = new Date(todo.creationDate).getTime()
@@ -38,9 +42,10 @@ const calculateAverageTimeByPriority = (toDos: ToDo[], priority: string) => {
 }
 
 const formatTime = (timeInMillis: number) => {
-  const hours = Math.floor((timeInMillis / (1000 * 60 * 60)) % 24)
-  const minutes = Math.floor((timeInMillis / (1000 * 60)) % 60)
-  const seconds = Math.floor((timeInMillis / 1000) % 60)
+  const totalSeconds = Math.floor(timeInMillis / 1000)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
 
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(
     2,

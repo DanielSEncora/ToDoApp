@@ -1,130 +1,121 @@
-import React, { useEffect, useState } from "react";
-import EditModal from "./EditModal";
-
-interface ToDo {
-  id: number;
-  text: string;
-  priority: string;
-  dueDate: string;
-  done: boolean;
-}
+import React, { useState, useMemo } from 'react'
+import EditModal from './EditModal'
+import { ToDo } from '../types'
+import useToDo from '../hooks/useToDo'
 
 interface ToDoTableProps {
-  toDos: ToDo[];
-  refreshData: () => void;
+  toDos: ToDo[]
+  refreshData: () => void
 }
 
 const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
-  const [sortedToDos, setSortedToDos] = useState<ToDo[]>(toDos);
-  const [sortColumn, setSortColumn] = useState<keyof ToDo | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 10; // Number of items per page
+  const { updateToDo, deleteToDo } = useToDo()
+  const [sortColumn, setSortColumn] = useState<keyof ToDo | null>(null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const itemsPerPage = 10
 
-  useEffect(() => {
-    setSortedToDos(toDos);
-  }, [toDos, refreshData]);
+  const isDefined = <T, K extends keyof T>(
+    obj: T,
+    key: K,
+  ): obj is T & Required<Pick<T, K>> => {
+    return obj[key] !== undefined
+  }
 
-  const updateDoneTrue = (id: number) => {
-    fetch(`http://localhost:9090/todos/${id}/done`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Failed to mark todo as done");
-        refreshData(); // Refresh data after deletion
-      })
-      .catch((error) => console.error("Error marking todo as done:", error));
-  };
+  const sortedToDos = useMemo(() => {
+    if (!sortColumn) return toDos
 
-  const updateDoneFalse = (id: number) => {
-    fetch(`http://localhost:9090/todos/${id}/undone`, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Failed to mark todo as undone");
-        refreshData(); // Refresh data after marking as undone
-      })
-      .catch((error) => console.error("Error marking todo as undone:", error));
-  };
-
-  const deleteAction = (id: number) => {
-    fetch(`http://localhost:9090/todos/${id}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error("Failed to delete todo");
-        refreshData(); // Refresh data after deletion
-      })
-      .catch((error) => console.error("Error deleting todo:", error));
-  };
-
-  const parseDate = (dateString: string): string => {
-    // Parse the date string into a Date object
-    const date: Date = new Date(dateString);
-
-    // Format the date to yyyy/MM/dd
-    const year: number = date.getFullYear();
-    const month: string = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero if needed
-    const day: string = String(date.getDate()).padStart(2, "0"); // Add leading zero if needed
-    return `${year}/${month}/${day}`;
-  };
-
-  const handleSort = (column: keyof ToDo) => {
-    const direction =
-      sortColumn === column && sortDirection === "asc" ? "desc" : "asc";
-    setSortColumn(column);
-    setSortDirection(direction);
-
-    const sortedToDos = [...toDos].sort((a, b) => {
-      if (column === "dueDate") {
-        const dateA = new Date(a[column]); // Parse directly as Date
-        const dateB = new Date(b[column]);
-        return direction === "asc"
+    return [...toDos].sort((a, b) => {
+      if (sortColumn === 'dueDate') {
+        const dateA = new Date(a[sortColumn] ?? 0) // Default to epoch time if undefined
+        const dateB = new Date(b[sortColumn] ?? 0)
+        return sortDirection === 'asc'
           ? dateA.getTime() - dateB.getTime()
-          : dateB.getTime() - dateA.getTime();
+          : dateB.getTime() - dateA.getTime()
       }
 
-      if (column === "priority") {
+      if (sortColumn === 'priority') {
         const priorityOrder: { [key: string]: number } = {
           LOW: 1,
           MEDIUM: 2,
           HIGH: 3,
-        };
-        return direction === "asc"
-          ? priorityOrder[a[column]] - priorityOrder[b[column]]
-          : priorityOrder[b[column]] - priorityOrder[a[column]];
+        }
+        return sortDirection === 'asc'
+          ? priorityOrder[a[sortColumn] ?? ''] -
+              priorityOrder[b[sortColumn] ?? '']
+          : priorityOrder[b[sortColumn] ?? ''] -
+              priorityOrder[a[sortColumn] ?? '']
       }
 
-      return a[column] < b[column]
-        ? direction === "asc"
+      // Default to string comparison
+      const valueA = a[sortColumn] ?? ''
+      const valueB = b[sortColumn] ?? ''
+      return sortDirection === 'asc'
+        ? valueA < valueB
           ? -1
           : 1
-        : direction === "asc"
-        ? 1
-        : -1;
-    });
+        : valueA > valueB
+        ? -1
+        : 1
+    })
+  }, [toDos, sortColumn, sortDirection])
 
-    setSortedToDos(sortedToDos);
-  };
+  const currentItems = useMemo(() => {
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    return sortedToDos.slice(indexOfFirstItem, indexOfLastItem)
+  }, [sortedToDos, currentPage, itemsPerPage])
 
-  const totalPages = Math.ceil(sortedToDos.length / itemsPerPage);
+  const handleSort = (column: keyof ToDo) => {
+    const direction =
+      sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc'
+    setSortColumn(column)
+    setSortDirection(direction)
+  }
 
-  // Get current items
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedToDos.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedToDos.length / itemsPerPage)
+
+  const handleUpdateDone = async (id: number, done: boolean) => {
+    const updatedToDo = toDos.find((todo) => todo.id === id)
+    if (updatedToDo) {
+      const updatedFields: Partial<ToDo> = {
+        ...updatedToDo,
+        done,
+        doneDate: done ? new Date().toISOString() : '', // Set doneDate to current time in UTC
+        dueDate: updatedToDo.dueDate, // Ensure dueDate is included
+        creationDate: updatedToDo.creationDate, // Ensure creationDate is included
+      }
+
+      console.log('Updating ToDo with payload:', updatedFields) // Log payload before sending
+
+      await updateToDo(id, updatedFields)
+      refreshData()
+    }
+  }
+
+  const formatDate = (date: Date): string => {
+    const day: string = String(date.getDate()).padStart(2, '0')
+    const month: string = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based
+    const year: number = date.getFullYear()
+    const hours: string = String(date.getHours()).padStart(2, '0')
+    const minutes: string = String(date.getMinutes()).padStart(2, '0')
+    const seconds: string = String(date.getSeconds()).padStart(2, '0')
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000+00:00` // Format to match dueDate and creationDate
+  }
+
+  const handleDelete = (id: number) => {
+    deleteToDo(id)
+    refreshData()
+  }
+
+  const parseDate = (dateString: string): string => {
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}/${month}/${day}`
+  }
 
   return (
     <div className="black-border-mp">
@@ -132,11 +123,44 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
         <thead className="table-headers">
           <tr>
             <th>
-              <input type="checkbox" name="check" />
+              <input type="checkbox" name="check" aria-label="Select all" />
             </th>
-            <th onClick={() => handleSort("text")}>Name</th>
-            <th onClick={() => handleSort("priority")}>Priority</th>
-            <th onClick={() => handleSort("dueDate")}>Due Date</th>
+            <th
+              onClick={() => handleSort('text')}
+              aria-sort={
+                sortColumn === 'text'
+                  ? sortDirection === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none'
+              }
+            >
+              Name
+            </th>
+            <th
+              onClick={() => handleSort('priority')}
+              aria-sort={
+                sortColumn === 'priority'
+                  ? sortDirection === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none'
+              }
+            >
+              Priority
+            </th>
+            <th
+              onClick={() => handleSort('dueDate')}
+              aria-sort={
+                sortColumn === 'dueDate'
+                  ? sortDirection === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none'
+              }
+            >
+              Due Date
+            </th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -148,27 +172,31 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
                   <input
                     type="checkbox"
                     name="check"
-                    checked={todo.done} // Use checked instead of defaultChecked
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        updateDoneTrue(todo.id);
-                      } else {
-                        updateDoneFalse(todo.id);
-                      }
-                    }}
+                    checked={todo.done}
+                    onChange={(e) =>
+                      handleUpdateDone(todo.id!, e.target.checked)
+                    }
+                    aria-label={`Mark ${todo.text} as ${
+                      todo.done ? 'undone' : 'done'
+                    }`}
                   />
                 </td>
                 <td>{todo.text}</td>
                 <td>{todo.priority}</td>
                 <td>{parseDate(todo.dueDate)}</td>
                 <td>
-                  <EditModal todoId={todo.id} onEdit={refreshData} />/
-                  <button
-                    className="action-buttons"
-                    onClick={() => deleteAction(todo.id)}
-                  >
-                    Delete
-                  </button>
+                  {isDefined(todo, 'id') && (
+                    <>
+                      <EditModal todoId={todo.id} onEdit={refreshData} />
+                      <button
+                        className="action-buttons"
+                        onClick={() => handleDelete(todo.id)}
+                        aria-label={`Delete ${todo.text}`}
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))
@@ -186,15 +214,16 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
             className="action-buttons pagination"
             onClick={() => setCurrentPage(index + 1)}
             style={{
-              fontWeight: currentPage === index + 1 ? "bold" : "normal",
+              fontWeight: currentPage === index + 1 ? 'bold' : 'normal',
             }}
+            aria-label={`Go to page ${index + 1}`}
           >
             {index + 1}
           </button>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ToDoTable;
+export default ToDoTable

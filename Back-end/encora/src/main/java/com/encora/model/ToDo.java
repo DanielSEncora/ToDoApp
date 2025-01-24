@@ -2,7 +2,10 @@ package com.encora.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The {@code ToDo} class represents a task with various attributes such as text,
@@ -29,7 +32,11 @@ public class ToDo {
     private String doneDate;
     private boolean done;
 
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    // List of possible date formats
+    private static final List<String> DATE_FORMATS = Arrays.asList(
+            "dd/MM/yyyy HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+    );
 
     /**
      * Default constructor. Initializes the task with default values.
@@ -48,12 +55,15 @@ public class ToDo {
      * @return the parsed {@code Date} object, or {@code null} if parsing fails
      */
     private Date parseDate(String dateString) {
-        try {
-            return simpleDateFormat.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null; // Handle parsing error
+        for (String format : DATE_FORMATS) {
+            try {
+                return new SimpleDateFormat(format, Locale.getDefault()).parse(dateString);
+            } catch (ParseException e) {
+                // Continue to the next format
+            }
         }
+        // If none of the formats work, return null or throw an exception
+        return null;
     }
 
     /**
