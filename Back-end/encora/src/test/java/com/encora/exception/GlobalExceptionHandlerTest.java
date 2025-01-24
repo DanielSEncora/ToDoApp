@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -12,7 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
+import java.lang.reflect.Method;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,13 +57,21 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleMethodArgumentNotValid() {
+    void testHandleMethodArgumentNotValid() throws NoSuchMethodException {
+        // Create a real MethodParameter from a dummy method
+        Method method = DummyClass.class.getMethod("dummyMethod");
+        MethodParameter methodParameter = new MethodParameter(method, -1);
+
+        // Mock BindingResult and FieldError
         BindingResult bindingResult = mock(BindingResult.class);
         FieldError fieldError = new FieldError("objectName", "field", "error message");
         when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
-        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
+
+        // Create MethodArgumentNotValidException with non-null MethodParameter
+        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(methodParameter, bindingResult);
         when(webRequest.getDescription(false)).thenReturn("description");
 
+        // Call the handler method and verify the response
         ResponseEntity<Object> response = globalExceptionHandler.handleMethodArgumentNotValid(ex, null, HttpStatus.BAD_REQUEST, webRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -80,5 +89,11 @@ class GlobalExceptionHandlerTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("Global exception", response.getBody().getMessage());
+    }
+
+    // Dummy class to create a real MethodParameter instance
+    private static class DummyClass {
+        public void dummyMethod() {
+        }
     }
 }
