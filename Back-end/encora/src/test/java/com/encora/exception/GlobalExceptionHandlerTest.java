@@ -19,6 +19,9 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the {@link GlobalExceptionHandler} class.
+ */
 class GlobalExceptionHandlerTest {
 
     @InjectMocks
@@ -27,11 +30,18 @@ class GlobalExceptionHandlerTest {
     @Mock
     private WebRequest webRequest;
 
+    /**
+     * Sets up the test environment by initializing mocks.
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Tests the handling of {@link ResourceNotFoundException}.
+     * Verifies that the response status is 404 NOT FOUND and the error message is correct.
+     */
     @Test
     void testHandleResourceNotFoundException() {
         ResourceNotFoundException ex = new ResourceNotFoundException("Resource not found");
@@ -44,6 +54,10 @@ class GlobalExceptionHandlerTest {
         assertEquals("Resource not found", response.getBody().getMessage());
     }
 
+    /**
+     * Tests the handling of {@link InvalidInputException}.
+     * Verifies that the response status is 400 BAD REQUEST and the error message is correct.
+     */
     @Test
     void testHandleInvalidInputException() {
         InvalidInputException ex = new InvalidInputException("Invalid input");
@@ -56,6 +70,12 @@ class GlobalExceptionHandlerTest {
         assertEquals("Invalid input", response.getBody().getMessage());
     }
 
+    /**
+     * Tests the handling of {@link MethodArgumentNotValidException}.
+     * Verifies that the response status is 400 BAD REQUEST and the error message indicates validation failure.
+     *
+     * @throws NoSuchMethodException if the dummy method cannot be found
+     */
     @Test
     void testHandleMethodArgumentNotValid() throws NoSuchMethodException {
         // Create a real MethodParameter from a dummy method
@@ -79,6 +99,10 @@ class GlobalExceptionHandlerTest {
         assertTrue(response.getBody().toString().contains("Validation failed"));
     }
 
+    /**
+     * Tests the handling of general {@link Exception}.
+     * Verifies that the response status is 500 INTERNAL SERVER ERROR and the error message is correct.
+     */
     @Test
     void testHandleGlobalException() {
         Exception ex = new Exception("Global exception");
@@ -91,7 +115,9 @@ class GlobalExceptionHandlerTest {
         assertEquals("Global exception", response.getBody().getMessage());
     }
 
-    // Dummy class to create a real MethodParameter instance
+    /**
+     * A dummy class used to create a real {@link MethodParameter} instance for testing.
+     */
     private static class DummyClass {
         public void dummyMethod() {
         }
