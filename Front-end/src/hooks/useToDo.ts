@@ -10,7 +10,7 @@ const useToDo = () => {
     fetchToDos();
   }, []);
 
-  const fetchToDos = async () => {
+  const fetchToDos = async (): Promise<ToDo[]> => {
     setLoading(true);
     setError(null);
     try {
@@ -24,14 +24,16 @@ const useToDo = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch to-dos');
       }
-      const data = await response.json();
+      const data: ToDo[] = await response.json();
       setToDos(data);
+      return data; // Return the fetched data
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
         setError('An unknown error occurred');
       }
+      return []; // Return an empty array on error
     } finally {
       setLoading(false);
     }

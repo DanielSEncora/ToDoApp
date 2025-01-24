@@ -6,10 +6,16 @@ import useToDo from '../hooks/useToDo'
 interface ToDoTableProps {
   toDos: ToDo[]
   refreshData: () => void
+  updateToDo: (id: number, updatedToDo: Partial<ToDo>) => Promise<void>
+  deleteToDo: (id: number) => Promise<void>
 }
 
-const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
-  const { updateToDo, deleteToDo } = useToDo()
+const ToDoTable: React.FC<ToDoTableProps> = ({
+  toDos,
+  refreshData,
+  updateToDo,
+  deleteToDo,
+}) => {
   const [sortColumn, setSortColumn] = useState<keyof ToDo | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -93,19 +99,8 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
     }
   }
 
-  const formatDate = (date: Date): string => {
-    const day: string = String(date.getDate()).padStart(2, '0')
-    const month: string = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based
-    const year: number = date.getFullYear()
-    const hours: string = String(date.getHours()).padStart(2, '0')
-    const minutes: string = String(date.getMinutes()).padStart(2, '0')
-    const seconds: string = String(date.getSeconds()).padStart(2, '0')
-
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000+00:00` // Format to match dueDate and creationDate
-  }
-
-  const handleDelete = (id: number) => {
-    deleteToDo(id)
+  const handleDelete = async (id: number) => {
+    await deleteToDo(id)
     refreshData()
   }
 
@@ -118,14 +113,15 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
   }
 
   return (
-    <div className="black-border-mp">
-      <table>
-        <thead className="table-headers">
+    <div className="p-4 bg-white rounded-lg shadow-md max-w-4xl mx-auto mt-8">
+      <table className="min-w-full bg-white border border-gray-300">
+        <thead className="bg-gray-200">
           <tr>
-            <th>
+            <th className="p-2 border border-gray-300 w-10 text-center">
               <input type="checkbox" name="check" aria-label="Select all" />
             </th>
             <th
+              className="p-2 border border-gray-300 cursor-pointer text-center"
               onClick={() => handleSort('text')}
               aria-sort={
                 sortColumn === 'text'
@@ -138,6 +134,7 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
               Name
             </th>
             <th
+              className="p-2 border border-gray-300 cursor-pointer text-center"
               onClick={() => handleSort('priority')}
               aria-sort={
                 sortColumn === 'priority'
@@ -150,6 +147,7 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
               Priority
             </th>
             <th
+              className="p-2 border border-gray-300 cursor-pointer text-center"
               onClick={() => handleSort('dueDate')}
               aria-sort={
                 sortColumn === 'dueDate'
@@ -161,14 +159,14 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
             >
               Due Date
             </th>
-            <th>Actions</th>
+            <th className="p-2 border border-gray-300 text-center">Actions</th>
           </tr>
         </thead>
-        <tbody className="table-group-divider">
+        <tbody>
           {Array.isArray(currentItems) && currentItems.length > 0 ? (
             currentItems.map((todo) => (
-              <tr key={todo.id}>
-                <td>
+              <tr key={todo.id} className="hover:bg-gray-100">
+                <td className="p-2 border border-gray-300 text-center">
                   <input
                     type="checkbox"
                     name="check"
@@ -181,41 +179,60 @@ const ToDoTable: React.FC<ToDoTableProps> = ({ toDos, refreshData }) => {
                     }`}
                   />
                 </td>
-                <td>{todo.text}</td>
-                <td>{todo.priority}</td>
-                <td>{parseDate(todo.dueDate)}</td>
-                <td>
+                <td
+                  className={`p-2 border border-gray-300 text-center ${
+                    todo.done ? 'line-through text-gray-500' : ''
+                  }`}
+                >
+                  {todo.text}
+                </td>
+                <td
+                  className={`p-2 border border-gray-300 text-center ${
+                    todo.done ? 'line-through text-gray-500' : ''
+                  }`}
+                >
+                  {todo.priority}
+                </td>
+                <td
+                  className={`p-2 border border-gray-300 text-center ${
+                    todo.done ? 'line-through text-gray-500' : ''
+                  }`}
+                >
+                  {parseDate(todo.dueDate)}
+                </td>
+                <td className="p-2 border border-gray-300 text-center">
                   {isDefined(todo, 'id') && (
-                    <>
+                    <div className="flex justify-center space-x-2">
                       <EditModal todoId={todo.id} onEdit={refreshData} />
                       <button
-                        className="action-buttons"
+                        className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-700"
                         onClick={() => handleDelete(todo.id)}
                         aria-label={`Delete ${todo.text}`}
                       >
                         Delete
                       </button>
-                    </>
+                    </div>
                   )}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={5}>No todos available</td>
+              <td colSpan={5} className="p-2 text-center">
+                No todos available
+              </td>
             </tr>
           )}
         </tbody>
       </table>
-      <div className="pagination black-border-mp">
+      <div className="flex justify-center mt-4">
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index}
-            className="action-buttons pagination"
+            className={`px-3 py-1 mx-1 border border-gray-300 ${
+              currentPage === index + 1 ? 'bg-blue-500 text-white' : ''
+            }`}
             onClick={() => setCurrentPage(index + 1)}
-            style={{
-              fontWeight: currentPage === index + 1 ? 'bold' : 'normal',
-            }}
             aria-label={`Go to page ${index + 1}`}
           >
             {index + 1}

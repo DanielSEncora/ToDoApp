@@ -72,57 +72,85 @@ const EditModal: React.FC<{ todoId: number; onEdit: () => void }> = ({
 
   return (
     <>
-      <button onClick={toggleModal} className="action-buttons">
+      <button
+        onClick={toggleModal}
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
         Edit
       </button>
 
       {modal && (
         <div className={`modal ${modal ? 'active' : ''}`}>
-          <div onClick={toggleModal} className="overlay"></div>
-          <div className="modal-content">
-            <h2>Edit To Do</h2>
-            <div>To Do Name:</div>
-            <input
-              type="text"
-              name="text"
-              maxLength={120}
-              value={toDo?.text || ''}
-              onChange={(e) =>
-                setToDo((prev) =>
-                  prev ? { ...prev, text: e.target.value } : null,
-                )
-              }
-            />
-            <div>Priority:</div>
-            <select
-              name="priority"
-              value={toDo?.priority || ''}
-              onChange={(e) =>
-                setToDo((prev) =>
-                  prev
-                    ? {
-                        ...prev,
-                        priority: e.target.value as 'LOW' | 'MEDIUM' | 'HIGH',
-                      }
-                    : null,
-                )
-              }
-            >
-              <option value="HIGH">High</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="LOW">Low</option>
-            </select>
-            <div>Due Date:</div>
-            <DatePicker
-              selected={dueDate}
-              onChange={(date) => setDueDate(date)} // Set selected date
-              showTimeSelect
-              dateFormat="Pp" // Custom format for date and time
-            />
-            <button className="close-modal" onClick={toggleModal}>
-              X
-            </button>
-            <input type="submit" value="Save Changes" onClick={handleEdit} />
+          <div
+            onClick={toggleModal}
+            className="fixed inset-0 bg-gray-600 bg-opacity-50"
+          ></div>
+          <div className="fixed inset-0 flex items-center justify-center px-4">
+            <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+              <h2 className="text-2xl font-bold mb-4">Edit To Do</h2>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">To Do Name:</label>
+                <input
+                  type="text"
+                  name="text"
+                  maxLength={120}
+                  value={toDo?.text || ''}
+                  onChange={(e) =>
+                    setToDo((prev) =>
+                      prev ? { ...prev, text: e.target.value } : null,
+                    )
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Priority:</label>
+                <select
+                  name="priority"
+                  value={toDo?.priority || ''}
+                  onChange={(e) =>
+                    setToDo((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            priority: e.target.value as
+                              | 'LOW'
+                              | 'MEDIUM'
+                              | 'HIGH',
+                          }
+                        : null,
+                    )
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                >
+                  <option value="HIGH">High</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="LOW">Low</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Due Date:</label>
+                <DatePicker
+                  selected={dueDate}
+                  onChange={(date) => setDueDate(date)} // Set selected date
+                  showTimeSelect
+                  dateFormat="Pp" // Custom format for date and time
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={toggleModal}
+              >
+                X
+              </button>
+              <input
+                type="submit"
+                value="Save Changes"
+                onClick={handleEdit}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 ml-2"
+              />
+            </div>
           </div>
         </div>
       )}

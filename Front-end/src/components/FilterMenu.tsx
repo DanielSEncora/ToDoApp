@@ -28,43 +28,66 @@ const FilterMenu: React.FC<FilterProps> = ({ onFilterChange }) => {
   }
 
   return (
-    <div className="black-border-mp">
-      <div>
-        <label htmlFor="name">Name</label>
-        <input
-          id="name"
-          type="text"
-          onChange={handleTextChange}
-          value={text}
-          placeholder="Name"
-        />
-      </div>
-      <div>
-        <label htmlFor="priority">Priority</label>
-        <select
-          id="priority"
-          name="priority"
-          value={priority}
-          onChange={handlePriorityChange}
-        >
-          <option value="">All</option>
-          <option value="HIGH">High</option>
-          <option value="MEDIUM">Medium</option>
-          <option value="LOW">Low</option>
-        </select>
-      </div>
-      <div>
-        <label htmlFor="state">State</label>
-        <select
-          id="state"
-          name="state"
-          onChange={handleDoneChange}
-          value={done}
-        >
-          <option value="">All</option>
-          <option value="done">Done</option>
-          <option value="undone">Undone</option>
-        </select>
+    <div className="p-4 bg-white rounded-lg shadow-md max-w-4xl mx-auto mt-8">
+      <h2 className="text-2xl font-bold text-center mb-4 text-gray-700">
+        Search for a task!
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="name"
+            className="block text-gray-700 font-semibold mb-2"
+          >
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            onChange={handleTextChange}
+            value={text}
+            placeholder="Enter task name"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="priority"
+            className="block text-gray-700 font-semibold mb-2"
+          >
+            Priority
+          </label>
+          <select
+            id="priority"
+            name="priority"
+            value={priority}
+            onChange={handlePriorityChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+        </div>
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="state"
+            className="block text-gray-700 font-semibold mb-2"
+          >
+            State
+          </label>
+          <select
+            id="state"
+            name="state"
+            onChange={handleDoneChange}
+            value={done}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All</option>
+            <option value="done">Done</option>
+            <option value="undone">Undone</option>
+          </select>
+        </div>
       </div>
     </div>
   )

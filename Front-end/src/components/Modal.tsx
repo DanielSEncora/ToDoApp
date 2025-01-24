@@ -66,22 +66,29 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
 
   return (
     <>
-      <button onClick={toggleModal} className="btn-modal">
-        + New To Do
+      <button
+        onClick={toggleModal}
+        className="fixed bottom-8 right-8 bg-blue-500 text-white w-16 h-16 flex items-center justify-center rounded-full shadow-lg hover:bg-blue-600 transition duration-300 text-3xl"
+      >
+        +
       </button>
 
       {modal && (
-        <div className={`modal ${modal ? 'active' : ''}`}>
-          <div onClick={toggleModal} className="overlay"></div>
-          <div
-            className="modal-content"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
-            <h2 id="modal-title">Create To Do</h2>
-            <div>
-              <label htmlFor="todo-text">To Do Name:</label>
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-auto">
+            <h2
+              className="text-2xl font-bold mb-4 text-gray-700"
+              id="modal-title"
+            >
+              Create To Do
+            </h2>
+            <div className="mb-4">
+              <label
+                htmlFor="todo-text"
+                className="block text-gray-700 font-semibold mb-2"
+              >
+                To Do Name:
+              </label>
               <input
                 id="todo-text"
                 type="text"
@@ -89,11 +96,17 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
                 maxLength={120}
                 value={newToDoText}
                 onChange={(e) => setNewToDoText(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-required="true"
               />
             </div>
-            <div>
-              <label htmlFor="todo-priority">Priority:</label>
+            <div className="mb-4">
+              <label
+                htmlFor="todo-priority"
+                className="block text-gray-700 font-semibold mb-2"
+              >
+                Priority:
+              </label>
               <select
                 id="todo-priority"
                 name="priority"
@@ -101,6 +114,7 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
                 onChange={(e) =>
                   setPriority(e.target.value as ToDo['priority'])
                 } // Ensure type is correctly set
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-required="true"
               >
                 <option value="HIGH">High</option>
@@ -108,8 +122,13 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
                 <option value="LOW">Low</option>
               </select>
             </div>
-            <div>
-              <label htmlFor="todo-due-date">Due Date:</label>
+            <div className="mb-4">
+              <label
+                htmlFor="todo-due-date"
+                className="block text-gray-700 font-semibold mb-2"
+              >
+                Due Date:
+              </label>
               <DatePicker
                 id="todo-due-date"
                 selected={dueDate}
@@ -118,22 +137,33 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
                 dateFormat="Pp" // Custom format for date and time
                 timeFormat="HH:mm:ss"
                 timeIntervals={1} // Show every minute
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-required="true"
               />
             </div>
             {error && (
-              <div className="error-message" role="alert">
+              <div
+                className="bg-red-100 text-red-700 p-2 rounded mb-4"
+                role="alert"
+              >
                 {error}
               </div>
             )}
-            <button
-              className="close-modal"
-              onClick={toggleModal}
-              aria-label="Close modal"
-            >
-              X
-            </button>
-            <input type="button" value="Add to do" onClick={handleAddToDo} />
+            <div className="flex justify-between">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+                onClick={toggleModal}
+                aria-label="Close modal"
+              >
+                X
+              </button>
+              <button
+                onClick={handleAddToDo}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+              >
+                Add to do
+              </button>
+            </div>
           </div>
         </div>
       )}
