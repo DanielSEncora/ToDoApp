@@ -1,6 +1,23 @@
+/**
+ * Metrics Component
+ *
+ * The Metrics component calculates and displays various metrics related to ToDo items.
+ * It calculates the average time to finish tasks and the average time to finish tasks
+ * by priority.
+ *
+ * @param {ToDo[]} toDos - The list of ToDo items to calculate metrics from.
+ * @returns {JSX.Element} The rendered Metrics component.
+ */
+
 import React, { useEffect } from 'react'
 import { ToDo } from '../types'
 
+/**
+ * Calculates the average time to finish tasks.
+ *
+ * @param {ToDo[]} toDos - The list of ToDo items.
+ * @returns {string} - The formatted average time to finish tasks.
+ */
 const calculateAverageTime = (toDos: ToDo[]) => {
   const finishedTasks = toDos.filter(
     (todo) => todo.done && todo.doneDate && todo.creationDate,
@@ -17,6 +34,13 @@ const calculateAverageTime = (toDos: ToDo[]) => {
   return formatTime(averageTimeInMillis)
 }
 
+/**
+ * Calculates the average time to finish tasks by priority.
+ *
+ * @param {ToDo[]} toDos - The list of ToDo items.
+ * @param {string} priority - The priority of the tasks to calculate the average time for.
+ * @returns {string} - The formatted average time to finish tasks by priority.
+ */
 const calculateAverageTimeByPriority = (toDos: ToDo[], priority: string) => {
   const finishedTasks = toDos.filter(
     (todo) =>
@@ -37,6 +61,12 @@ const calculateAverageTimeByPriority = (toDos: ToDo[], priority: string) => {
   return formatTime(averageTimeInMillis)
 }
 
+/**
+ * Formats a time in milliseconds into a string.
+ *
+ * @param {number} timeInMillis - The time in milliseconds.
+ * @returns {string} - The formatted time string.
+ */
 const formatTime = (timeInMillis: number) => {
   const totalSeconds = Math.floor(timeInMillis / 1000)
   const hours = Math.floor(totalSeconds / 3600)

@@ -1,3 +1,14 @@
+/**
+ * FilterMenu Component
+ *
+ * The FilterMenu component provides a user interface for filtering ToDo items.
+ * It includes input fields for task name, priority, and state (done/undone).
+ * The component uses debouncing to optimize the filtering process.
+ *
+ * @param {(text: string, priority: string, done: string) => void} onFilterChange - A callback function to be called when the filter criteria change.
+ * @returns {JSX.Element} The rendered FilterMenu component.
+ */
+
 import React, { useState, useCallback } from 'react'
 import '../App.css'
 
@@ -10,18 +21,34 @@ const FilterMenu: React.FC<FilterProps> = ({ onFilterChange }) => {
   const [priority, setPriority] = useState<string>('')
   const [done, setDone] = useState<string>('')
 
+  // Debounce the onFilterChange function to limit the number of times it is called
   const debouncedFilterChange = useCallback(debounce(onFilterChange, 300), [])
 
+  /**
+   * Handles changes to the text input field.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value)
     debouncedFilterChange(e.target.value, priority, done)
   }
 
+  /**
+   * Handles changes to the priority select field.
+   *
+   * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event.
+   */
   const handlePriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPriority(e.target.value)
     debouncedFilterChange(text, e.target.value, done)
   }
 
+  /**
+   * Handles changes to the state (done/undone) select field.
+   *
+   * @param {React.ChangeEvent<HTMLSelectElement>} e - The change event.
+   */
   const handleDoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDone(e.target.value)
     debouncedFilterChange(text, priority, e.target.value)
@@ -93,7 +120,13 @@ const FilterMenu: React.FC<FilterProps> = ({ onFilterChange }) => {
   )
 }
 
-// Utility function to debounce calls
+/**
+ * Utility function to debounce calls.
+ *
+ * @param {Function} func - The function to debounce.
+ * @param {number} wait - The delay in milliseconds.
+ * @returns {Function} - The debounced function.
+ */
 function debounce(func: Function, wait: number) {
   let timeout: NodeJS.Timeout
   return function executedFunction(...args: any[]) {

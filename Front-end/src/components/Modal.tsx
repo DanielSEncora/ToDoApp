@@ -1,3 +1,14 @@
+/**
+ * Modal Component
+ *
+ * The Modal component provides a user interface for adding new ToDo items.
+ * It includes form fields for the ToDo name, priority, and due date, and
+ * handles form validation and submission.
+ *
+ * @param {() => void} onAdd - A callback function to be called when a new ToDo is successfully added.
+ * @returns {JSX.Element} The rendered Modal component.
+ */
+
 import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -17,6 +28,9 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
   const [dueDate, setDueDate] = useState<Date | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  /**
+   * Toggles the visibility of the modal.
+   */
   const toggleModal = () => {
     setModal((prev) => !prev)
   }
@@ -27,6 +41,12 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
     document.body.classList.remove('active-modal')
   }
 
+  /**
+   * Formats a Date object into a string based on backend requirements.
+   *
+   * @param {Date} date - The date to format.
+   * @returns {string} - The formatted date string.
+   */
   const formatDate = (date: Date): string => {
     const pad = (num: number) => String(num).padStart(2, '0')
     const day = pad(date.getDate())
@@ -39,6 +59,9 @@ const Modal: React.FC<ModalProps> = ({ onAdd }) => {
     return `${day}/${month}/${year} ${hours}:${minutes}:00`
   }
 
+  /**
+   * Handles the addition of a new ToDo item.
+   */
   const handleAddToDo = async () => {
     if (!newToDoText || !dueDate) {
       setError('Please fill out all fields.')

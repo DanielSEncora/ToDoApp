@@ -1,3 +1,15 @@
+/**
+ * EditModal Component
+ *
+ * The EditModal component provides a user interface for editing an existing ToDo item.
+ * It includes form fields for the ToDo name, priority, and due date, and handles form
+ * validation and submission.
+ *
+ * @param {number} todoId - The ID of the ToDo item to edit.
+ * @param {() => void} onEdit - A callback function to be called when the ToDo item is successfully edited.
+ * @returns {JSX.Element} The rendered EditModal component.
+ */
+
 import React, { useEffect, useState, useCallback } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -15,6 +27,9 @@ const EditModal: React.FC<{ todoId: number; onEdit: () => void }> = ({
 
   const { fetchToDo, updateToDo } = useToDo() // Use the custom hook
 
+  /**
+   * Fetches the ToDo item data.
+   */
   const fetchData = useCallback(async () => {
     try {
       const data = await fetchToDo(todoId)
@@ -29,6 +44,9 @@ const EditModal: React.FC<{ todoId: number; onEdit: () => void }> = ({
     fetchData()
   }, [fetchData])
 
+  /**
+   * Toggles the visibility of the modal.
+   */
   const toggleModal = () => {
     setModal((prev) => !prev)
   }
@@ -39,6 +57,9 @@ const EditModal: React.FC<{ todoId: number; onEdit: () => void }> = ({
     document.body.classList.remove('active-modal')
   }
 
+  /**
+   * Handles the editing of the ToDo item.
+   */
   const handleEdit = async () => {
     if (toDo) {
       const updatedToDo: ToDo = {
@@ -57,17 +78,6 @@ const EditModal: React.FC<{ todoId: number; onEdit: () => void }> = ({
         console.error('Error updating todo:', error)
       }
     }
-  }
-
-  const formatDate = (date: Date): string => {
-    const day: string = String(date.getDate()).padStart(2, '0')
-    const month: string = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based
-    const year: number = date.getFullYear()
-    const hours: string = String(date.getHours()).padStart(2, '0')
-    const minutes: string = String(date.getMinutes()).padStart(2, '0')
-    const seconds: string = String(date.getSeconds()).padStart(2, '0')
-
-    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}` // Format as dd/MM/yyyy HH:mm:ss
   }
 
   return (

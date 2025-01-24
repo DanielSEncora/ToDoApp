@@ -1,7 +1,19 @@
+/**
+ * ToDoTable Component
+ *
+ * The ToDoTable component is responsible for displaying a table of ToDo items.
+ * It provides functionalities for sorting, pagination, updating, and deleting ToDos.
+ *
+ * @param {ToDo[]} toDos - The list of ToDo items to display.
+ * @param {() => void} refreshData - Function to refresh the data.
+ * @param {(id: number, updatedToDo: Partial<ToDo>) => Promise<void>} updateToDo - Function to update a ToDo item.
+ * @param {(id: number) => Promise<void>} deleteToDo - Function to delete a ToDo item.
+ * @returns {JSX.Element} The rendered ToDoTable component.
+ */
+
 import React, { useState, useMemo } from 'react'
 import EditModal from './EditModal'
 import { ToDo } from '../types'
-import useToDo from '../hooks/useToDo'
 
 interface ToDoTableProps {
   toDos: ToDo[]
@@ -21,6 +33,13 @@ const ToDoTable: React.FC<ToDoTableProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1)
   const itemsPerPage = 10
 
+  /**
+   * Helper function to check if a property is defined on an object.
+   *
+   * @param {T} obj - The object to check.
+   * @param {K} key - The key to check on the object.
+   * @returns {boolean} - Whether the key is defined on the object.
+   */
   const isDefined = <T, K extends keyof T>(
     obj: T,
     key: K,
@@ -28,6 +47,9 @@ const ToDoTable: React.FC<ToDoTableProps> = ({
     return obj[key] !== undefined
   }
 
+  /**
+   * Memoized function to sort the ToDo items based on the selected column and direction.
+   */
   const sortedToDos = useMemo(() => {
     if (!sortColumn) return toDos
 
@@ -66,12 +88,20 @@ const ToDoTable: React.FC<ToDoTableProps> = ({
     })
   }, [toDos, sortColumn, sortDirection])
 
+  /**
+   * Memoized function to get the current items based on pagination.
+   */
   const currentItems = useMemo(() => {
     const indexOfLastItem = currentPage * itemsPerPage
     const indexOfFirstItem = indexOfLastItem - itemsPerPage
     return sortedToDos.slice(indexOfFirstItem, indexOfLastItem)
   }, [sortedToDos, currentPage, itemsPerPage])
 
+  /**
+   * Function to handle sorting of columns.
+   *
+   * @param {keyof ToDo} column - The column to sort by.
+   */
   const handleSort = (column: keyof ToDo) => {
     const direction =
       sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc'
@@ -81,6 +111,12 @@ const ToDoTable: React.FC<ToDoTableProps> = ({
 
   const totalPages = Math.ceil(sortedToDos.length / itemsPerPage)
 
+  /**
+   * Function to handle updating the done status of a ToDo item.
+   *
+   * @param {number} id - The ID of the ToDo item.
+   * @param {boolean} done - The new done status.
+   */
   const handleUpdateDone = async (id: number, done: boolean) => {
     const updatedToDo = toDos.find((todo) => todo.id === id)
     if (updatedToDo) {
@@ -99,11 +135,22 @@ const ToDoTable: React.FC<ToDoTableProps> = ({
     }
   }
 
+  /**
+   * Function to handle deleting a ToDo item.
+   *
+   * @param {number} id - The ID of the ToDo item.
+   */
   const handleDelete = async (id: number) => {
     await deleteToDo(id)
     refreshData()
   }
 
+  /**
+   * Function to parse a date string into a more readable format.
+   *
+   * @param {string} dateString - The date string to parse.
+   * @returns {string} - The parsed date string.
+   */
   const parseDate = (dateString: string): string => {
     const date = new Date(dateString)
     const year = date.getFullYear()

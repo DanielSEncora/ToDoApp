@@ -1,3 +1,13 @@
+/**
+ * useToDo Hook
+ * 
+ * The useToDo hook provides functionality to manage ToDo items, including fetching, 
+ * adding, updating, and deleting ToDos. It also handles loading and error states.
+ * 
+ * @returns {object} - An object containing the ToDo items, loading state, error state, 
+ * and functions to manage ToDo items.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { ToDo } from '../types';
 
@@ -6,10 +16,16 @@ const useToDo = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch all ToDos when the component mounts
   useEffect(() => {
     fetchToDos();
   }, []);
 
+  /**
+   * Fetches all ToDo items.
+   * 
+   * @returns {Promise<ToDo[]>} - A promise that resolves to an array of ToDo items.
+   */
   const fetchToDos = async (): Promise<ToDo[]> => {
     setLoading(true);
     setError(null);
@@ -39,6 +55,12 @@ const useToDo = () => {
     }
   };
 
+  /**
+   * Fetches a single ToDo item by ID.
+   * 
+   * @param {number} id - The ID of the ToDo item to fetch.
+   * @returns {Promise<ToDo>} - A promise that resolves to the fetched ToDo item.
+   */
   const fetchToDo = useCallback(async (id: number): Promise<ToDo> => {
     setLoading(true);
     setError(null);
@@ -66,6 +88,13 @@ const useToDo = () => {
     }
   }, []);
 
+  /**
+   * Fetches filtered ToDo items based on text, priority, and done status.
+   * 
+   * @param {string} text - The text to filter by.
+   * @param {string} priority - The priority to filter by.
+   * @param {string} done - The done status to filter by.
+   */
   const fetchFilteredData = async (text: string, priority: string, done: string) => {
     setLoading(true);
     setError(null);
@@ -93,6 +122,11 @@ const useToDo = () => {
     }
   };
 
+  /**
+   * Adds a new ToDo item.
+   * 
+   * @param {Omit<ToDo, 'id'>} newToDo - The new ToDo item to add.
+   */
   const addToDo = async (newToDo: Omit<ToDo, 'id'>) => {
     const response = await fetch('http://localhost:9090/todos', {
       method: 'POST',
@@ -111,6 +145,12 @@ const useToDo = () => {
     setToDos((prevToDos) => [...prevToDos, data]);
   };
 
+  /**
+   * Updates an existing ToDo item by ID.
+   * 
+   * @param {number} id - The ID of the ToDo item to update.
+   * @param {Partial<ToDo>} updatedToDo - The updated ToDo item data.
+   */
   const updateToDo = async (id: number, updatedToDo: Partial<ToDo>) => {
     setLoading(true);
     setError(null);
@@ -141,6 +181,11 @@ const useToDo = () => {
     }
   };
 
+  /**
+   * Deletes a ToDo item by ID.
+   * 
+   * @param {number} id - The ID of the ToDo item to delete.
+   */
   const deleteToDo = async (id: number) => {
     setLoading(true);
     setError(null);
